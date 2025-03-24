@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from . models import Register
 
 # Create your views here.
 
@@ -22,7 +23,16 @@ def login(request):
     return render(request, "sports_shop_app/login.html")
 
 def register(request):
-    return render(request, "sports_shop_app/register.html")
+    if request.method == "POST":
+        name = request.POST.get("registerName")
+        email = request.POST.get("registerEmail")
+        password = request.POST.get("registerPassword")
+
+        register = Register(name=name, email=email, password=password)
+        register.save()
+        return render(request, "sports_shop_app/register.html", {"message": "Registration successful!"})
+    else:
+        return render(request, "sports_shop_app/register.html")
 
 def profile(request):
     return render(request, "sports_shop_app/profile.html")
