@@ -17,3 +17,18 @@ def shop(request):
 
 def skating(request):
     return render(request, "sports_shop_app/skating.html")
+
+def login(request):
+    return render(request, "sports_shop_app/login.html")
+
+def register(request):
+    return render(request, "sports_shop_app/register.html")
+
+def profile(request):
+    return render(request, "sports_shop_app/profile.html")
+
+def settings(request):
+    return render(request, "sports_shop_app/settings.html")
+
+def logout(request):
+    return render(request, "sports_shop_app/logout.html")
