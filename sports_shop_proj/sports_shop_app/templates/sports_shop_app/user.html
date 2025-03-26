@@ -76,6 +76,23 @@
             background: transparent;
             border-bottom: 2px solid #007bff;
          }
+         /* Logout confirmation modal styles */
+         .logout-modal .modal-dialog {
+            max-width: 400px;
+         }
+         .logout-modal .modal-body {
+            text-align: center;
+            padding: 30px;
+         }
+         .logout-modal .modal-footer {
+            justify-content: center;
+            border-top: none;
+            padding-top: 0;
+         }
+         .logout-modal .btn {
+            min-width: 100px;
+            margin: 0 10px;
+         }
       </style>
    </head>
    <!-- body -->
@@ -106,19 +123,7 @@
                      <div class="collapse navbar-collapse" id="navbarsExample04">
                         <ul class="navbar-nav mr-auto">
                            <li class="nav-item active">
-                              <a class="nav-link" href="/">Home</a>
-                           </li>
-                           <li class="nav-item">
-                              <a class="nav-link" href="{% url 'about' %}">About</a>
-                           </li>
-                           <li class="nav-item">
-                              <a class="nav-link" href="{% url 'skating' %}">skating</a>
-                           </li>
-                           <li class="nav-item">
-                              <a class="nav-link" href="{% url 'shop' %}">shop</a>
-                           </li>
-                           <li class="nav-item">
-                              <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+                              <a class="nav-link" href="#">Welcome {{ user }}</a>
                            </li>
                         </ul>
                      </div>
@@ -126,7 +131,7 @@
                </div>
                <div class="col-md-2">
                   <ul class="email text_align_right">
-                     <li class="d_none"><a href="#" data-toggle="modal" data-target="#authModal"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                     <li class="d_none"><a href="#" data-toggle="modal" data-target="#logoutModal"><i class="fa fa-user" aria-hidden="true"></i></a></li>
                      <li class="d_none"> <a href="Javascript:void(0)"><i class="fa fa-search" style="cursor: pointer;" aria-hidden="true"></i></a> </li>
                   </ul>
                </div>
@@ -135,70 +140,25 @@
       </div>
       <!-- end header inner -->
       
-      <!-- Auth Modal -->
-      <div class="modal fade" id="authModal" tabindex="-1" role="dialog" aria-labelledby="authModalLabel" aria-hidden="true">
-         <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-               <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                     <span aria-hidden="true">&times;</span>
-                  </button>
-               </div>
-               <div class="modal-body">
-                  <ul class="nav nav-tabs" id="authTabs" role="tablist">
-                     <li class="nav-item">
-                        <a class="nav-link active" id="login-tab" data-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">Login</a>
-                     </li>
-                     <li class="nav-item">
-                        <a class="nav-link" id="register-tab" data-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="false">Register</a>
-                     </li>
-                  </ul>
-                  <div class="tab-content" id="authTabsContent">
-                     <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-                        <form>
-                           <div class="form-group">
-                              <input type="email" class="form-control" id="loginEmail" placeholder="Email address">
-                           </div>
-                           <div class="form-group">
-                              <input type="password" class="form-control" id="loginPassword" placeholder="Password">
-                           </div>
-                           <div class="form-group form-check">
-                              <input type="checkbox" class="form-check-input" id="rememberMe">
-                              <label class="form-check-label" for="rememberMe">Remember me</label>
-                           </div>
-                           <button type="submit" class="btn btn-primary">Login</button>
-                           <div class="auth-toggle">
-                              <a href="#" class="btn-link">Forgot password?</a>
-                           </div>
-                        </form>
-                     </div>
-                     <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
-                        <form action="{% url 'register' %}" method="post">
-                           {% csrf_token %}
-                           <div class="form-group">
-                              <input type="text" class="form-control" name="registerName" id="registerName" placeholder="Full name">
-                           </div>
-                           <div class="form-group">
-                              <input type="email" class="form-control" name="registerEmail" id="registerEmail" placeholder="Email address">
-                           </div>
-                           <div class="form-group">
-                              <input type="password" class="form-control" name="registerPassword" id="registerPassword" placeholder="Password">
-                           </div>
-                           <div class="form-group">
-                              <input type="password" class="form-control" name="registerConfirmPassword" id="registerConfirmPassword" placeholder="Confirm password">
-                           </div>
-                           <button type="submit" class="btn btn-primary">Register</button>
-                           <div class="auth-toggle">
-                              Already have an account? <a href="#" class="btn-link" id="switchToLogin">Login</a>
-                           </div>
-                        </form>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
+      <!-- Logout Confirmation Modal -->
+      <!-- Logout Confirmation Modal -->
+      <div class="modal fade logout-modal" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <h4>Do you want to log out?</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-primary">Yes</button>
+                </div>
+            </form>
+        </div>
+        </div>
       </div>
-
+      
       <!-- rest of your existing code remains the same -->
       <!-- top -->
       <div class="full_bg">
@@ -653,6 +613,13 @@
                e.preventDefault();
                // Add your form submission logic here
                alert('Form would be submitted here in a real implementation');
+            });
+            
+            // Logout confirmation handler
+            $('#confirmLogout').click(function() {
+               // Here you would typically make an AJAX call to your logout endpoint
+               // For now, we'll just redirect to a logout URL
+               window.location.href = '/logout/'; // Update this with your actual logout URL
             });
          });
       </script>

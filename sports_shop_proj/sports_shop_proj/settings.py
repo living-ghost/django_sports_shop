@@ -82,6 +82,13 @@ DATABASES = {
 }
 
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Default backend for authentication
+    'sports_shop_app.backends.UserBackend',  # Custom backend for user authentication
+]
+
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
