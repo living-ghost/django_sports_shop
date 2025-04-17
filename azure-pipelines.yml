@@ -85,14 +85,4 @@ stages:
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
               runtimeStack: 'PYTHON|3.11'
               startupCommand: 'gunicorn --bind 0.0.0.0:8000 sports_shop_proj.wsgi'
-              appSettings: |
-                [
-                  {
-                    "name": "DJANGO_SETTINGS_MODULE",
-                    "value": "sports_shop_proj.settings"
-                  },
-                  {
-                    "name": "WEBSITE_PORT",
-                    "value": "8000"
-                  }
-                ]
+              
