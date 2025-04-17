@@ -10,7 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +25,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-xt&k-$x9bb4%v*uofa5ppirmw#jyx2&$lvu!&r7r9%47fw$i4#"
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key')  # Always provide a fallback
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 
 # Application definition
@@ -88,6 +92,24 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
+# Email Configuration (for OTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # For production
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development (prints emails to console)
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')  # Default fallback
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))  # Convert to int
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'  # Convert to boolean
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+
+# Session settings (for storing OTP)
+SESSION_COOKIE_SECURE = True  # Enable in production (HTTPS)
+SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default (stores sessions in DB)
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'  # Faster (if using Redis/Memcached)
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -123,7 +145,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

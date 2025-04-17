@@ -84,6 +84,7 @@
       <div class="loader_bg">
          <div class="loader"><img src="{% static 'images/loading.gif' %}" alt="#"/></div>
       </div>
+      <!-- Display Django messages -->
       <!-- end loader -->
       <!-- header -->
       <div class="header">
@@ -578,18 +579,16 @@
                         <div class="col-md-12">
                            <div class="infoma">
                               <h3>Newsletter</h3>
-                              <form class="form_subscri">
+                              <form class="form_subscri" action="{% url 'send_otp' %}" method="post">
+                                 {% csrf_token %}
                                  <div class="row">
                                     <div class="col-md-12">
                                     </div>
                                     <div class="col-md-4">
-                                       <input class="newsl" placeholder="Enter your email" type="text" name="Enter your email">
+                                       <input class="newsl" placeholder="Enter your email" name="email" required type="text" name="Enter your email">
                                     </div>
                                     <div class="col-md-4">
-                                       <input class="newsl" placeholder="Enter your email" type="text" name="Enter your email">
-                                    </div>
-                                    <div class="col-md-4">
-                                       <button class="subsci_btn">subscribe</button>
+                                       <button type="submit" class="subsci_btn">Subscribe with OTP</button>
                                     </div>
                                  </div>
                               </form>

@@ -2,8 +2,14 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from .models import Register
+from .models import Register, Subscriber
 
+# Imports Supporting OTP Verification
+
+import random
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib import messages
 
 # Create your views here.
 
@@ -27,9 +33,6 @@ def user(request):
 
 def profile(request):
     return render(request, "sports_shop_app/profile.html")
-
-def settings(request):
-    return render(request, "sports_shop_app/settings.html")
 
 def login(request):
     if request.method == "POST":
@@ -76,4 +79,68 @@ def register(request):
 
 def logout(request):
     auth_logout(request)
+    return redirect('index')
+
+def send_otp(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+
+        if not email:
+            messages.error(request, "Email is required!")
+            return redirect('index')
+        
+        otp = str(random.randint(100000, 999999))
+
+        request.session['otp'] = otp
+        request.session['email'] = email
+        request.session.set_expiry(300)
+        
+        try:
+            send_mail(
+                subject="Your OTP for Subscription",
+                message=f"Your OTP is: {otp}",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[email],
+                fail_silently=False
+            )
+
+            messages.success(request, "OTP sent to your email")
+
+            return render(request, "sports_shop_app/verify_otp.html")
+        
+        except Exception as e:
+            # Clear session if email fails
+            if 'otp' in request.session:
+                del request.session['otp']
+            if 'email' in request.session:
+                del request.session['email']
+
+            messages.error(request, f"Failed to send OTP: {str(e)}")
+            return redirect('index')
+
+    return redirect('index')
+
+def verify_otp(request):
+    if request.method == "POST":
+        user_otp = request.POST.get("otp", "").strip()
+        stored_otp = request.session.get("otp")
+        email = request.session.get("email")
+
+        if not (user_otp and stored_otp and email):
+            messages.error(request, "Invalid OTP or session expired!")
+            return redirect('index')
+        
+        if user_otp == stored_otp:
+            try:
+                Subscriber.objects.create(subscriber_email=email, is_verified=True)
+                messages.success(request, "Email verified and subscribed!")
+            except Exception as e:
+                messages.error(request, f"Error: {str(e)}")
+        else:
+            messages.error(request, "Invalid OTP!")
+
+        del request.session['otp']
+        del request.session['email']
+        return redirect('index')
+    
     return redirect('index')

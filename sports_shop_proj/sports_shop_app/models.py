@@ -41,3 +41,9 @@ class Register(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
+
+
+class Subscriber(models.Model):
+    subscriber_email = models.EmailField(max_length=200, unique=True)
+    is_verified = models.BooleanField(default=False)  # Track verification status
+    otp = models.CharField(max_length=6, blank=True, null=True)  # Store OTP (optional)
