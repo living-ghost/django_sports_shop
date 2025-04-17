@@ -38,11 +38,11 @@ stages:
       displayName: 'Use Python $(pythonVersion)'
 
     - script: |
-        cd ..
         python -m venv antenv
         source antenv/bin/activate
         python -m pip install --upgrade pip
-        pip install setup
+        # Navigate to correct directory if needed
+        cd $(projectRoot)
         pip install -r requirements.txt
       workingDirectory: $(projectRoot)
       displayName: "Install requirements"
