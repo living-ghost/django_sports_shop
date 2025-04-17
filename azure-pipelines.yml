@@ -96,3 +96,7 @@ stages:
                     "value": "8000"
                   }
                 ]
+              configurationStrings: |
+                {
+                  "linuxFxVersion": "PYTHON|3.11"
+                }
