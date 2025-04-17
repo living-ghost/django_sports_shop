@@ -38,14 +38,28 @@ stages:
       displayName: 'Use Python $(pythonVersion)'
 
     - script: |
+        # Create virtual environment
         python -m venv antenv
         source antenv/bin/activate
+        
+        # Upgrade pip (optional)
         python -m pip install --upgrade pip
-        # Navigate to correct directory if needed
-        cd $(projectRoot)
-        pip install -r requirements.txt
-      workingDirectory: $(projectRoot)
-      displayName: "Install requirements"
+        
+        # Debug: Show current directory and files
+        echo "Current directory: $(pwd)"
+        echo "Directory contents:"
+        ls -la
+        
+        # Install requirements (with full path for reliability)
+        if [ -f "requirements.txt" ]; then
+            pip install -r requirements.txt
+        else
+            echo "##vso[task.logissue type=error]requirements.txt not found in $(pwd)"
+            echo "##vso[task.complete result=Failed]"
+            exit 1
+        fi
+      workingDirectory: $(Build.SourcesDirectory)
+      displayName: "Install Python requirements"
 
     - task: ArchiveFiles@2
       displayName: 'Archive files'
