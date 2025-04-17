@@ -18,24 +18,31 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '$(pythonVersion)'
-      displayName: 'Use Python $(pythonVersion)'
-
     - script: |
         python -m venv antenv
         source antenv/bin/activate
         
-        # Install dependencies
+        # Install requirements including staticfiles support
         pip install --upgrade pip
         pip install -r requirements.txt
-        pip install gunicorn  # Required for production deployment
+        pip install gunicorn django.contrib.staticfiles
         
-        # Collect static files (ensure STATIC_ROOT is set in settings.py)
-        python manage.py collectstatic --noinput
-      workingDirectory: $(projectRoot)  # Now points directly to Django project
-      displayName: "Install requirements and prepare Django"
+        # Verify staticfiles is installed
+        python -c "import django.contrib.staticfiles; print('Staticfiles installed')"
+        
+        # Only run collectstatic if staticfiles is configured
+        if [ -f "$(projectRoot)/sports_shop_proj/settings.py" ]; then
+          if grep -q "STATIC_ROOT" "$(projectRoot)/sports_shop_proj/settings.py"; then
+            python manage.py collectstatic --noinput
+          else
+            echo "STATIC_ROOT not configured in settings.py, skipping collectstatic"
+          fi
+        fi
+        
+        # Run migrations
+        python manage.py migrate --noinput
+      workingDirectory: $(projectRoot)
+      displayName: "Install and prepare Django"
 
     - script: |
         source antenv/bin/activate
