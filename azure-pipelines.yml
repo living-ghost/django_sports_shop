@@ -50,8 +50,8 @@ stages:
           
           # Install requirements
           pip install -r requirements.txt
-          workingDirectory: $(Build.SourcesDirectory)
-          displayName: "Install requirements"
+      workingDirectory: $(Build.SourcesDirectory)
+      displayName: "Install requirements"
 
     - task: ArchiveFiles@2
       displayName: 'Archive files'
