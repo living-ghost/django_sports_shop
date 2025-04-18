@@ -12,7 +12,6 @@ variables:
   pythonVersion: '3.11'
 
   # Environment variables (excluding secret ones)
-  ALLOWED_HOSTS: '$(webAppUrl),127.0.0.1,localhost'
   DEBUG: 'False'
   EMAIL_HOST: 'smtp.gmail.com'
   EMAIL_PORT: '587'
