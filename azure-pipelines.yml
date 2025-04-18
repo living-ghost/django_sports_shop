@@ -9,6 +9,15 @@ variables:
   environmentName: 'django-fruits-app-project'
   projectRoot: $(System.DefaultWorkingDirectory)/sports_shop_proj  # Updated to point to Django root
   pythonVersion: '3.11'
+  
+  # Environment variables (secret values should be set in pipeline variables)
+  SECRET_KEY: $(SECRET_KEY)
+  ALLOWED_HOSTS: 'https://django-fruits-app-project-c7a5hbb3fqfef6fx.canadacentral-01.azurewebsites.net/'
+  DEBUG: 'True'
+  EMAIL_HOST: 'smtp.gmail.com'
+  EMAIL_PORT: '587'
+  EMAIL_HOST_USER: $(EMAIL_HOST_USER)
+  EMAIL_HOST_PASSWORD: $(EMAIL_HOST_PASSWORD)
 
 stages:
 - stage: Build
@@ -43,6 +52,14 @@ stages:
         python manage.py migrate --noinput
       workingDirectory: $(projectRoot)
       displayName: "Install and prepare Django"
+      env:
+        SECRET_KEY: $(SECRET_KEY)
+        ALLOWED_HOSTS: $(ALLOWED_HOSTS)
+        DEBUG: $(DEBUG)
+        EMAIL_HOST: $(EMAIL_HOST)
+        EMAIL_PORT: $(EMAIL_PORT)
+        EMAIL_HOST_USER: $(EMAIL_HOST_USER)
+        EMAIL_HOST_PASSWORD: $(EMAIL_HOST_PASSWORD)
 
     - script: |
         source antenv/bin/activate
@@ -50,6 +67,14 @@ stages:
         python manage.py migrate --noinput
       workingDirectory: $(projectRoot)
       displayName: "Verify and run migrations"
+      env:
+        SECRET_KEY: $(SECRET_KEY)
+        ALLOWED_HOSTS: $(ALLOWED_HOSTS)
+        DEBUG: $(DEBUG)
+        EMAIL_HOST: $(EMAIL_HOST)
+        EMAIL_PORT: $(EMAIL_PORT)
+        EMAIL_HOST_USER: $(EMAIL_HOST_USER)
+        EMAIL_HOST_PASSWORD: $(EMAIL_HOST_PASSWORD)
 
     - task: ArchiveFiles@2
       displayName: 'Archive files'
@@ -85,4 +110,13 @@ stages:
               package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
               runtimeStack: 'PYTHON|3.11'
               startupCommand: 'gunicorn --bind 0.0.0.0:8000 sports_shop_proj.wsgi'
-              
+              appSettings: |
+                [
+                  {"name": "SECRET_KEY", "value": "$(SECRET_KEY)"},
+                  {"name": "ALLOWED_HOSTS", "value": "$(ALLOWED_HOSTS)"},
+                  {"name": "DEBUG", "value": "$(DEBUG)"},
+                  {"name": "EMAIL_HOST", "value": "$(EMAIL_HOST)"},
+                  {"name": "EMAIL_PORT", "value": "$(EMAIL_PORT)"},
+                  {"name": "EMAIL_HOST_USER", "value": "$(EMAIL_HOST_USER)"},
+                  {"name": "EMAIL_HOST_PASSWORD", "value": "$(EMAIL_HOST_PASSWORD)"}
+                ]
