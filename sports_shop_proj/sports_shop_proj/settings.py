@@ -13,7 +13,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = ['django-fruits-app-project-c7a5hbb3fqfef6fx.canadacentral-01.azurewebsites.net']
+ALLOWED_HOSTS = 'os.getenv('ALLOWED_HOSTS', '').split(',')'
 
 # Application definition
 INSTALLED_APPS = [
