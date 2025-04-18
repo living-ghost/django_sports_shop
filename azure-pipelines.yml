@@ -10,15 +10,12 @@ variables:
   environmentName: 'django-fruits-app-project'
   projectRoot: $(System.DefaultWorkingDirectory)/sports_shop_proj
   pythonVersion: '3.11'
-  
-  # Environment variables
-  SECRET_KEY: $(SECRET_KEY)
+
+  # Environment variables (excluding secret ones)
   ALLOWED_HOSTS: '$(webAppUrl),127.0.0.1,localhost'
-  DEBUG: 'False'  # Should be False in production
+  DEBUG: 'False'
   EMAIL_HOST: 'smtp.gmail.com'
   EMAIL_PORT: '587'
-  EMAIL_HOST_USER: $(EMAIL_HOST_USER)
-  EMAIL_HOST_PASSWORD: $(EMAIL_HOST_PASSWORD)
 
 stages:
 - stage: Build
