@@ -37,7 +37,6 @@ stages:
       displayName: "Install dependencies and prepare Django"
       env:
         SECRET_KEY: $(SECRET_KEY)
-        ALLOWED_HOSTS: $(ALLOWED_HOSTS)
         DEBUG: $(DEBUG)
         EMAIL_HOST: $(EMAIL_HOST)
         EMAIL_PORT: $(EMAIL_PORT)
@@ -80,7 +79,6 @@ stages:
               startupCommand: 'gunicorn --bind 0.0.0.0:8000 sports_shop_proj.wsgi'
               appSettings: |
                 SECRET_KEY=$(SECRET_KEY)
-                ALLOWED_HOSTS=$(ALLOWED_HOSTS)
                 DEBUG=$(DEBUG)
                 EMAIL_HOST=$(EMAIL_HOST)
                 EMAIL_PORT=$(EMAIL_PORT)
